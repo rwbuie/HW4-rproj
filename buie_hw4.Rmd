@@ -18,135 +18,100 @@ output: html_notebook
 ## (b) Let ^ f0, ^ f1, ^ f2 denote the least squares regression coefcients for a model that predicts Y using X1 and X2. Derive the least squares coefcient estimates for a model that predicts Y using ~X1 and X2. (By \derive", I mean: state the coefcient estimates, and show mathematically why these are the coefcient estimates.)
 
 
-(c) Prove that the ftted values for the least squares model that predicts Y
-using X1 and X2 are the same as the ftted values for the least squares
-model that predicts Y using ~X1 and X2.
-(d) Now, for some fxed f > 0, consider performing ridge regression to predict
-Y using X1 and X2, and also performing a separate ridge regression to
-predict Y using ~X1 and X2. Which of these ftted models will have a
-smaller residual sum of squares? Which of these ftted models will have a
-smaller value of f2
-1 + f2
-2? Justify your answers.
-(e) Simulate a quantitative response Y as well as two quantitative features
-X1 and X2, each of length n = 100. Verify numerically that your answers
-to (a){(d) are correct.
-1
-(f) Now perform K-nearest-neighbors regression to predict Y using X1 and
-X2, and also to predict Y using ~X1 and X2. Using the data generated in
-(e) (or else using diferent data, if needed), show that the KNN regression
-approach is not scale-invariant.
-(g) Finally, consider ftting a ridge regression model to predict Y using just
-X1, for a tuning parameter value f > 0. You also consider ftting a ridge
-regression model to predict Y using just ~X1, for a tuning parameter value
-~f 0. Is there a relationship between f and ~f that will make it so that
-the ftted values for the two models are equal? Justify your answer. If
-you answered yes, then state the relationship in the most general terms
-possible.
+## (c) Prove that the ftted values for the least squares model that predicts Y using X1 and X2 are the same as the ftted values for the least squares model that predicts Y using ~X1 and X2.
 
 
-2. In this problem, we wish to predict a quantitative response Y using X1 and
-X2, where X1 is height in meters, and X2 is height in centimeters.
-(a) Suppose that ( ^ f0; ^ f1; ^ f2) are least squares coefcient estimates for the
-model that uses X1 and X2 to predict Y . Explain why this least squares
-solution is not unique. Derive a general expression for the set of least
-squares coefcient estimates (your answer should be written in terms of
-^ f0; ^ f1; ^ f2).
-(b) Now suppose that ( ~ f0; ~ f1; ~ f2) are ridge regression coefcient estimates for
-the model that uses X1 and X2 to predict Y . Is this ridge regression
-solution unique? In this instance, is the ridge regression solution sparse?
-Justify your answers.
-(c) Now suppose that ( f f0; f f1; f f2) are lasso coefcient estimates for the model
-that uses X1 and X2 to predict Y . Is this lasso solution unique? In this
-instance, is the lasso solution sparse? Justify your answers.
-(d) Now answer questions (b) and (c) again, but this time for the model that
-uses X1 and X1 to predict Y . (That was not a typo: you are being asked to
-consider the model that uses the same predictor twice in order to predict
-Y ).
-(e) Now suppose we ft a lasso model to predict Y using X1 with some fxed
-tuning parameter value f > 0. We also ft a lasso model to predict Y using
-X2, again with the same fxed tuning parameter value f > 0. Which of
-these two models will have a smaller value for the residual sum of squares?
-Which of these two models will have a smaller value of the lasso penalty
-term? Justify your answers.
-3. In this problem, you will analyze a (real, not simulated) dataset of your choice
-with a quantitative response Y , and p f 50 quantitative predictors.
-(a) Describe the data. Where did you get it from? What is the meaning of
-the response, and what are the meanings of the predictors?
-(b) Fit a least squares linear model to the data, and provide an estimate of
-the test error. (Explain how you got this estimate.)
-2
-(c) Fit a ridge regression model to the data, with a range of values of the
-tuning parameter f. Make a plot like the left-hand panel of Figure 6.4 in
-the textbook.
-(d) What value of f in the ridge regression model provides the smallest estimated
-test error? Report this estimate of test error. (Also, explain how
-you estimated test error.)
-(e) Repeat (c), but for a lasso model.
-(f) Repeat (d), but for a lasso model. Which features are included in this
-lasso model?
-4. Consider predicting a quantitative response using p features, using a linear regression
-model ft via least squares. LetMBSS
-k ;MFWD
-k ;MBWD
-k denote the best
-k-feature models in the best subset, forward stepwise, and backward stepwise
-selection procedures.
-Recall that the training set residual sum of squares (or RSS for short) is defned
-as
-Pn
-i=1(yi ?? ^yi)2.
-For each claim, fll in the blank with one of the following: \less than or equal
-to", \greater than or equal to", \equal to". Say \not enough information to
-tell" if it is not possible to complete the sentence as given. Justify your answers.
-(a) Claim: The RSS of MBWD
-p is the RSS of MBSS
-p .
-(b) Claim: The RSS of MBWD
-p??1 is the RSS of MBSS
-p??1 .
-(c) Claim: The RSS of MBWD
-4 is the RSS of MBSS
-4 .
-(d) Claim: The RSS of MBWD
-4 is the RSS of MFWD
-4 .
-(e) Claim: The RSS of MFWD
-1 is the RSS of MBWD
-1 .
-(f) Claim: The RSS of MFWD
-0 is the RSS of MBWD
-0 .
-(g) Claim: The RSS of MFWD
-1 is the RSS of MBSS
-1 .
-(h) Claim: The RSS of MBWD
-1 is the RSS of MBSS
-1 .
-5. In this problem, you will simulate some data, and then will carry out forward
-and backward stepwise selection on the simulated data.
-(a) Simulate a quantitative predictor X with n = 100. Then, generate a
-response Y according to the model
-Y = f0 + f1X + f2X2 + f3X5 + e:
-Provide details of how you generated X, how you chose f0; : : : ; f3, and
-how you generated e.
-(b) Fit a least squares linear model to predict Y using X;X2; : : : ;X10, and
-report the coefcient estimates obtained, as well as the p-values corresponding
-to null hypotheses of the form H0j : fj = 0. Comment on your
-results, in light of the way you generated the data in (a).
-3
-(c) Using the leaps package in R, perform forward stepwise selection. Write
-out the \best" least squares linear model that you found using forward
-stepwise selection (specify both the predictors and the coefcients in this
-model). Comment on your results, in light of the way you generated the
-data in (a). In what sense is this model \best"?
-(d) Using the leaps package in R, perform backward stepwise selection. Write
-out the \best" least squares linear model that you found using backward
-stepwise selection (specify both the predictors and the coefcients in this
-model). Comment on your results, in light of the way you generated the
-data in (a). In what sense is this model \best"?
-(e) Now generate n = 100 test observations (you can do this using the exact
-same data-generating set-up used in (a)). Compute the mean squared
-error of the models obtained in (b){(d) on this test set. Comment on your
-results.
-4
+## (d) Now, for some fxed f > 0, consider performing ridge regression to predict Y using X1 and X2, and also performing a separate ridge regression to predict Y using ~X1 and X2. Which of these ftted models will have a smaller residual sum of squares? Which of these ftted models will have a smaller value of f2 1 + f2 2? Justify your answers.
+
+
+
+## (e) Simulate a quantitative response Y as well as two quantitative featuresX1 and X2, each of length n = 100. Verify numerically that your answers to (a){(d) are correct. 
+
+##(f) Now perform K-nearest-neighbors regression to predict Y using X1 and X2, and also to predict Y using ~X1 and X2. Using the data generated in (e) (or else using diferent data, if needed), show that the KNN regression approach is not scale-invariant.
+
+##(g) Finally, consider ftting a ridge regression model to predict Y using just X1, for a tuning parameter value f > 0. You also consider ftting a ridge regression model to predict Y using just ~X1, for a tuning parameter value ~f 0. Is there a relationship between f and ~f that will make it so that the ftted values for the two models are equal? Justify your answer. If you answered yes, then state the relationship in the most general terms possible.
+
+
+#2. In this problem, we wish to predict a quantitative response Y using X1 andX2, where X1 is height in meters, and X2 is height in centimeters.
+
+##(a) Suppose that ( ^ f0; ^ f1; ^ f2) are least squares coefcient estimates for themodel that uses X1 and X2 to predict Y . Explain why this least squares solution is not unique. Derive a general expression for the set of least squares coefcient estimates (your answer should be written in terms of ^ f0; ^ f1; ^ f2).
+
+
+## (b) Now suppose that ( ~ f0; ~ f1; ~ f2) are ridge regression coefcient estimates for the model that uses X1 and X2 to predict Y . Is this ridge regression solution unique? In this instance, is the ridge regression solution sparse? Justify your answers.
+
+
+## (c) Now suppose that ( f f0; f f1; f f2) are lasso coefcient estimates for the modelthat uses X1 and X2 to predict Y . Is this lasso solution unique? In this instance, is the lasso solution sparse? Justify your answers.
+
+
+## (d) Now answer questions (b) and (c) again, but this time for the model that uses X1 and X1 to predict Y . (That was not a typo: you are being asked to consider the model that uses the same predictor twice in order to predictY ).
+
+
+##(e) Now suppose we ft a lasso model to predict Y using X1 with some fxed tuning parameter value f > 0. We also ft a lasso model to predict Y using X2, again with the same fxed tuning parameter value f > 0. Which of these two models will have a smaller value for the residual sum of squares? Which of these two models will have a smaller value of the lasso penalty term? Justify your answers.
+
+
+# 3. In this problem, you will analyze a (real, not simulated) dataset of your choicewith a quantitative response Y , and p f 50 quantitative predictors.
+
+
+##(a) Describe the data. Where did you get it from? What is the meaning of the response, and what are the meanings of the predictors?
+
+
+## (b) Fit a least squares linear model to the data, and provide an estimate of the test error. (Explain how you got this estimate.)
+
+
+## (c) Fit a ridge regression model to the data, with a range of values of the tuning parameter f. Make a plot like the left-hand panel of Figure 6.4 in the textbook.
+
+
+## (d) What value of f in the ridge regression model provides the smallest estimated test error? Report this estimate of test error. (Also, explain how you estimated test error.)
+
+
+## (e) Repeat (c), but for a lasso model.
+
+
+## (f) Repeat (d), but for a lasso model. Which features are included in this lasso model?
+
+
+# 4. Consider predicting a quantitative response using p features, using a linear regression model ft via least squares. LetMBSSk ;MFWD k ;MBWD k denote the bestk-feature models in the best subset, forward stepwise, and backward stepwise selection procedures.Recall that the training set residual sum of squares (or RSS for short) is defned as Pn i=1(yi ?? ^yi)2. For each claim, fll in the blank with one of the following: \less than or equal to", \greater than or equal to", \equal to". Say \not enough information to tell" if it is not possible to complete the sentence as given. Justify your answers.
+
+## (a) Claim: The RSS of MBWD p is the RSS of MBSS p .
+
+
+##(b) Claim: The RSS of MBWD p??1 is the RSS of MBSS p??1 .
+
+
+## (c) Claim: The RSS of MBWD 4 is the RSS of MBSS4 .
+
+
+## (d) Claim: The RSS of MBWD4 is the RSS of MFWD4 .
+
+
+## (e) Claim: The RSS of MFWD 1 is the RSS of MBWD 1 .
+
+
+## (f) Claim: The RSS of MFWD 0 is the RSS of MBWD 0 .
+
+
+## (g) Claim: The RSS of MFWD1 is the RSS of MBSS1 .
+
+
+##(h) Claim: The RSS of MBWD 1 is the RSS of MBSS 1 .
+
+
+
+# 5. In this problem, you will simulate some data, and then will carry out forward and backward stepwise selection on the simulated data.
+
+
+##(a) Simulate a quantitative predictor X with n = 100. Then, generate aresponse Y according to the modelY = f0 + f1X + f2X2 + f3X5 + e:Provide details of how you generated X, how you chose f0; : : : ; f3, and how you generated e.
+
+
+## (b) Fit a least squares linear model to predict Y using X;X2; : : : ;X10, andreport the coefcient estimates obtained, as well as the p-values corresponding to null hypotheses of the form H0j : fj = 0. Comment on your results, in light of the way you generated the data in (a). 
+
+
+
+## (c) Using the leaps package in R, perform forward stepwise selection. Write out the \best" least squares linear model that you found using forward stepwise selection (specify both the predictors and the coefcients in thismodel). Comment on your results, in light of the way you generated the data in (a). In what sense is this model \best"?
+
+
+## (d) Using the leaps package in R, perform backward stepwise selection. Write out the \best" least squares linear model that you found using backward stepwise selection (specify both the predictors and the coefcients in this model). Comment on your results, in light of the way you generated thedata in (a). In what sense is this model \best"?
+
+
+
+## (e) Now generate n = 100 test observations (you can do this using the exact same data-generating set-up used in (a)). Compute the mean squared error of the models obtained in (b){(d) on this test set. Comment on your results. 
