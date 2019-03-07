@@ -11,49 +11,113 @@ output: html_notebook
 
 #1. Suppose we wish to predict a quantitative response Y using X1, which represents height (in meters) and X2, which represents weight (in pounds). We will also consider predicting Y using ~X1, which represents height (in centimeters), and X2.
 
+
 ## (a) Prove that the residual sum of squares for the least squares model that predicts Y using X1 and X2 is the same as the residual sum of squares for the least squares model that predicts Y using ~X1 and X2.
 
+$$RSS = min \sum^i_{i=1} (Y_i - \hat\beta_0 - \hat\beta_1X_1 - \hat\beta_2X_2)^2  $$
+
+$$RSS = min \sum^i_{i=1} (Y_i - \hat\beta_0 - \hat\beta_1\tilde{X}_1 - \hat\beta_2X_2)^2 $$
+
+Noting that $\tilde{X}_1$ is from the set inclusive of $X_1$ the minimum of each is equivalent.
+
+
+$$RSS = min \sum^i_{i=1} (Y_i - \hat\beta_0 - 0.01 \times \hat\beta_1X_1 - \hat\beta_2X_2)^2 = min \sum^i_{i=1} (Y_i - \hat\beta_0 - \hat\beta_1\tilde{X}_1 - \hat\beta_2X_2)^2$$
+and 
+
+$$RSS = min \sum^i_{i=1} (Y_i - \hat\beta_0 - 100 \times \hat\beta_1\tilde{X}_1 - \hat\beta_2X_2)^2 =  min \sum^i_{i=1} (Y_i - \hat\beta_0 -  \hat\beta_1X_1 - \hat\beta_2X_2)^2$$
 
 
 ## (b) Let ^ f0, ^ f1, ^ f2 denote the least squares regression coefcients for a model that predicts Y using X1 and X2. Derive the least squares coefcient estimates for a model that predicts Y using ~X1 and X2. (By \derive", I mean: state the coefcient estimates, and show mathematically why these are the coefcient estimates.)
 
+From the previous proof it carries that
 
 ## (c) Prove that the ftted values for the least squares model that predicts Y using X1 and X2 are the same as the ftted values for the least squares model that predicts Y using ~X1 and X2.
 
 
+Setting our coefficients to 1 given
+
+$$f(Y) =  \hat\beta_0 + \hat\beta_1X_1 + \hat\beta_2X_2 $$
+
+and 
+
+$$f(Y)^\prime = \hat\beta_0 + \hat\beta_1\tilde{X}_1 + \hat\beta_2X_2 $$
+
+and 
+
+$$ \hat\beta_0 + \hat\beta_1X_1 + \hat\beta_2X_2 = \hat\beta_0 + 100 \times \hat\beta_1\tilde{X}_1 + \hat\beta_2X_2 $$
+
+In predicting Y for both models we can hold $\beta_0$ and $\beta_2$ constant, cancelling them out, leaving
+
+$$ f(Y)^\prime =\hat\beta_1X_1 $$
+
+and 
+
+$$ f(Y)^\prime =\hat\beta_1\tilde{X}_1 $$
+
+give that $X_1 \times 0.01 = \tilde{X}_1 $ and $ \tilde{X}_1 \times 100 = X_1$ it follows that $f(Y)^\prime = f(Y) \times 0.01$ and that $f(Y) = f(Y)^\prime \times 100$
+
+
 ## (d) Now, for some fxed f > 0, consider performing ridge regression to predict Y using X1 and X2, and also performing a separate ridge regression to predict Y using ~X1 and X2. Which of these ftted models will have a smaller residual sum of squares? Which of these ftted models will have a smaller value of f2 1 + f2 2? Justify your answers.
 
+Note that $\beta_1$ coefficient is 100 times larger than the $\tilde{\beta}_1$ coefficient. For any $\lambda > 0$, ridge regression will penalize more greatly those models with the highest squared coefficients. This would be the model contraining $\beta$, and so the other would be preffered.
+
+## (e) Simulate a quantitative response Y as well as two quantitative featuresX1 and X2, each of length n = 100. Verify numerically that your answers to (a){(c) are correct. 
 
 
-## (e) Simulate a quantitative response Y as well as two quantitative featuresX1 and X2, each of length n = 100. Verify numerically that your answers to (a){(d) are correct. 
 
 ##(f) Now perform K-nearest-neighbors regression to predict Y using X1 and X2, and also to predict Y using ~X1 and X2. Using the data generated in (e) (or else using diferent data, if needed), show that the KNN regression approach is not scale-invariant.
 
+
+
 ##(g) Finally, consider ftting a ridge regression model to predict Y using just X1, for a tuning parameter value f > 0. You also consider ftting a ridge regression model to predict Y using just ~X1, for a tuning parameter value ~f 0. Is there a relationship between f and ~f that will make it so that the ftted values for the two models are equal? Justify your answer. If you answered yes, then state the relationship in the most general terms possible.
 
+Yes.Any given lambda has a higher lambda. Ridge regression penalizes the model but does not reduce any coefficient to 0, so that for any lambda there is a $\tilde{\lambda} <  \lambda$ that can decrease the fitted value to meet that resulting from the model using $\lambda$.
 
 #2. In this problem, we wish to predict a quantitative response Y using X1 andX2, where X1 is height in meters, and X2 is height in centimeters.
 
 ##(a) Suppose that ( ^ f0; ^ f1; ^ f2) are least squares coefcient estimates for themodel that uses X1 and X2 to predict Y . Explain why this least squares solution is not unique. Derive a general expression for the set of least squares coefcient estimates (your answer should be written in terms of ^ f0; ^ f1; ^ f2).
 
+$$ f(Y) = \hat\beta_0 + \hat\beta_1X_1 + \hat\beta_2X_2$$
+
+$\beta_1$ and $\beta_2$ are linearly corelated such that
+
+$$\beta_1 = \beta_2 *100  $$ 
+
+and
+
+$$\beta_2 = \beta_1* 0.01 $$
+
+Thus, for any value of beta 1 there is a value of beta 2 that can equal it once the multiplier is applied.
+
 
 ## (b) Now suppose that ( ~ f0; ~ f1; ~ f2) are ridge regression coefcient estimates for the model that uses X1 and X2 to predict Y . Is this ridge regression solution unique? In this instance, is the ridge regression solution sparse? Justify your answers.
+
+The ridge regression is unique because changes in beta 1 and beta 2 for any identical Y will change the square of the coefficients. No ridge regression is sparse; all coeficients will be retained, but may trend towards 0.
 
 
 ## (c) Now suppose that ( f f0; f f1; f f2) are lasso coefcient estimates for the modelthat uses X1 and X2 to predict Y . Is this lasso solution unique? In this instance, is the lasso solution sparse? Justify your answers.
 
+
+The lasso regression will be unqiue for the same reasons, but ridge regressions can drop a coefficient to 0 and so are sparse.
 
 ## (d) Now answer questions (b) and (c) again, but this time for the model that uses X1 and X1 to predict Y . (That was not a typo: you are being asked to consider the model that uses the same predictor twice in order to predictY ).
 
 
 ##(e) Now suppose we ft a lasso model to predict Y using X1 with some fxed tuning parameter value f > 0. We also ft a lasso model to predict Y using X2, again with the same fxed tuning parameter value f > 0. Which of these two models will have a smaller value for the residual sum of squares? Which of these two models will have a smaller value of the lasso penalty term? Justify your answers.
 
+The two models will have an identical RSS, as this is scale invariant. However for any given Y, the model with the larger coefficient for beta 2 will be penalized the most.
 
 # 3. In this problem, you will analyze a (real, not simulated) dataset of your choicewith a quantitative response Y , and p f 50 quantitative predictors.
 
+```{r}
+library(xlsx)
+test <- readxl::read_xlsx("TARGET_AML_ClinicalData_20160714.xlsx", 1)
+
+```
 
 ##(a) Describe the data. Where did you get it from? What is the meaning of the response, and what are the meanings of the predictors?
 
+These data were acquired during a recent biomics hackathon at fred hutch. It is the clinical characteristics from the  adult leukemia subset of the openly available data from the TARGET study. 
 
 ## (b) Fit a least squares linear model to the data, and provide an estimate of the test error. (Explain how you got this estimate.)
 
@@ -72,29 +136,38 @@ output: html_notebook
 
 # 4. Consider predicting a quantitative response using p features, using a linear regression model ft via least squares. LetMBSSk ;MFWD k ;MBWD k denote the bestk-feature models in the best subset, forward stepwise, and backward stepwise selection procedures.Recall that the training set residual sum of squares (or RSS for short) is defned as Pn i=1(yi ?? ^yi)2. For each claim, fll in the blank with one of the following: \less than or equal to", \greater than or equal to", \equal to". Say \not enough information to tell" if it is not possible to complete the sentence as given. Justify your answers.
 
-## (a) Claim: The RSS of MBWD p is the RSS of MBSS p .
+### (a) Claim: The RSS of MBWD p is the RSS of MBSS p .
 
+equal. For any value of p, BWD will optimall choose this first model. BSS will optimally choose model for any of p = p to p = 0
 
-##(b) Claim: The RSS of MBWD p??1 is the RSS of MBSS p??1 .
+###(b) Claim: The RSS of MBWD p??1 is the RSS of MBSS p??1 .
 
+equal or greater than. While BSS will always choose the optimal model. BWD may fail to by keeping the choice of dropped parameter in model p. it may be that p-1 should include that parameter.
 
-## (c) Claim: The RSS of MBWD 4 is the RSS of MBSS4 .
+### (c) Claim: The RSS of MBWD 4 is the RSS of MBSS4 .
 
+equal, this is the same as (a)
 
-## (d) Claim: The RSS of MBWD4 is the RSS of MFWD4 .
+### (d) Claim: The RSS of MBWD4 is the RSS of MFWD4 .
 
+equal. in the case that p = max(p), both models will use all features.
 
-## (e) Claim: The RSS of MFWD 1 is the RSS of MBWD 1 .
+### (e) Claim: The RSS of MFWD 1 is the RSS of MBWD 1 .
 
+equal. FWD will optimally choose the first model above p=0 (p=1), and BWD will optimally choose the first model of p. In this example, those are the same.
 
-## (f) Claim: The RSS of MFWD 0 is the RSS of MBWD 0 .
+### (f) Claim: The RSS of MFWD 0 is the RSS of MBWD 0 .
 
+equal, in the case of p=0, both algorithms will choose the empty model
 
-## (g) Claim: The RSS of MFWD1 is the RSS of MBSS1 .
+### (g) Claim: The RSS of MFWD1 is the RSS of MBSS1 .
+
+equal. in the case of P=1, FWD will choose the optimal (there is no prior guess to retain) and BSS will always choose the optimal. It is also the case that this is the set of all choices
 
 
 ##(h) Claim: The RSS of MBWD 1 is the RSS of MBSS 1 .
 
+equal. BWD will start with the full model, BSS will always choose the optimal model. In this case those are the same.
 
 
 # 5. In this problem, you will simulate some data, and then will carry out forward and backward stepwise selection on the simulated data.
