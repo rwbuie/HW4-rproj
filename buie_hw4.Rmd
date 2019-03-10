@@ -275,36 +275,36 @@ The best MSE is `r LASSOMSE` and is provided by a lamda of `r bestLASSOlamda`.
 
 # 4. Consider predicting a quantitative response using p features, using a linear regression modelt via least squares. LetMBSSk k denote the best feature models in the best subset, forward stepwise, and backward stepwise selection procedures. Recall that the training set residual sum of squares (or RSS for short) is ll in the blank with one of the following: s than or equalto, greater than or equal toequal toot enough information totell if it is not possible to complete the sentence as given. Justify your answers.
 
-### (a) Claim: The RSS of MBWD p is the RSS of MBSS p .
+## (a) Claim: The RSS of MBWD p is the RSS of MBSS p .
 
 equal. For any value of p, BWD will optimall choose this first model. BSS will optimally choose model for any of p = p to p = 0
 
-###(b) Claim: The RSS of MBWD p??1 is the RSS of MBSS p??1 .
+##(b) Claim: The RSS of MBWD p??1 is the RSS of MBSS p??1 .
 
 equal or greater than. While BSS will always choose the optimal model. BWD may fail to by keeping the choice of dropped parameter in model p. it may be that p-1 should include that parameter.
 
-### (c) Claim: The RSS of MBWD 4 is the RSS of MBSS4 .
+## (c) Claim: The RSS of MBWD 4 is the RSS of MBSS4 .
 
 equal, this is the same as (a)
 
-### (d) Claim: The RSS of MBWD4 is the RSS of MFWD4 .
+## (d) Claim: The RSS of MBWD4 is the RSS of MFWD4 .
 
 equal. in the case that p = max(p), both models will use all features.
 
-### (e) Claim: The RSS of MFWD 1 is the RSS of MBWD 1 .
+## (e) Claim: The RSS of MFWD 1 is the RSS of MBWD 1 .
 
 equal. FWD will optimally choose the first model above p=0 (p=1), and BWD will optimally choose the first model of p. In this example, those are the same.
 
-### (f) Claim: The RSS of MFWD 0 is the RSS of MBWD 0 .
+## (f) Claim: The RSS of MFWD 0 is the RSS of MBWD 0 .
 
 equal, in the case of p=0, both algorithms will choose the empty model
 
-### (g) Claim: The RSS of MFWD1 is the RSS of MBSS1 .
+## (g) Claim: The RSS of MFWD1 is the RSS of MBSS1 .
 
 equal. in the case of P=1, FWD will choose the optimal (there is no prior guess to retain) and BSS will always choose the optimal. It is also the case that this is the set of all choices
 
 
-##(h) Claim: The RSS of MBWD 1 is the RSS of MBSS 1 .
+## (h) Claim: The RSS of MBWD 1 is the RSS of MBSS 1 .
 
 equal. BWD will start with the full model, BSS will always choose the optimal model. In this case those are the same.
 
@@ -316,6 +316,7 @@ equal. BWD will start with the full model, BSS will always choose the optimal mo
 
 ```{r}
 set.seed(6000)
+library(pracma)
 
 betafunction <- function(x) {
  #(x^2)/400
@@ -324,23 +325,29 @@ betafunction <- function(x) {
 b0 = 300
 
 x <- sample(1:1000,100, replace = TRUE)
+
 y<- 1:100
 for (i in 1:100) {
- y[i] <- b0 + betafunction(x[i]) + betafunction(x[i]^2) + betafunction(x[i]^5) + round(rnorm(1,0,80),0)
+  #I am not sure if this approach is correct, where our betas have a strict relationship because x, x^2, and x^5 do,
+ #y[i] <- b0 + betafunction(x[i]) + betafunction(x[i]^2) + betafunction(x[i]^5) + round(rnorm(1,0,80),0)
+  
+  #or if this appproach is correct, where betas can be defined arbitrarily
+  y[i] <- 100 + 30*x[i] + 50*x[i]^2 + 40*x[i]^5 + round(rnorm(1,0,800),0)
+
+  #or this way, where each beta is the matching root of each x
+  #y[i] <- 100 + 30*x[i] + nthroot(30,2)*x[i]^2 + nthroot(30,5)*x[i]^5 + round(rnorm(1,0,80),0)
+  
+  #however, the second two do give similar results
 }
 plot(y~x)
 
-Basey <- 1:100
 
-for (i in 1:100) {
- Basey[i] <- b0 + betafunction(x[i]) + round(rnorm(1,0,80),0)
-}
 
-Q5Data <- as.data.frame(cbind(y= Basey,x))
-plot(Basey~x)
+Q5Data <- as.data.frame(cbind(y,x))
+
 ```
 
-Our predictors are a set of random numbers from `r min(x)` to `r max(x)`. The beta coefficient for $\beta_0$ was generated as an arbitrary number `r b0`. Our $\beta_1$ coefficient was generated using a static formula $(X^2)/400$ so that the $\beta_2$ and $\beta_3$ of this formula are the squared and pentagonal powers of this formula. Our error term was generated as an integer from a normal distribution with a mean of 0 and standard deviation of 800.
+Our predictors are a set of random numbers from `r min(x)` to `r max(x)`. The beta coefficients were generated as arbitrary numbers.Our error term was generated as an integer from a normal distribution with a mean of 0 and standard deviation of 800.
 
 ## (b) Fit a least squares linear model to predict Y using X;X2; : : : ;X10, andreport the coefcient estimates obtained, as well as the p-values corresponding to null hypotheses of the form H0j : fj = 0. Comment on your results, in light of the way you generated the data in (a). 
 
@@ -351,7 +358,7 @@ summary(test)
 
 ```
 
-Because we know the true relationship of x and y is 1 to 1, we know that any amount of exponentiation would create a reduced fit. We see this in our regression where, including polynomials up to 10, reducing all of them to insignicance.
+The 2nd and 5th exponentiations of x are indicated as significant in our model. These are the ones that were used to generate y. However, the non exponentiated x, which was also included, is indicated as insignificant in our model.
 
 ## (c) Using the leaps package in R, perform forward stepwise selection. Write out the  least squares linear model that you found using forward stepwise selection (specify both the predictors and the coefcients in thismodel). Comment on your results, in light of the way you generated the data in (a). 
 
@@ -368,7 +375,7 @@ results$which[which.min(results$adjr2),]
 coef(forwardStep,which.min(results$adjr2))
 ```
 
-This model was identified as the best because it ha the lowest adjusted R squared. Surprisngly it also includes three of the polynomial terms. This is surprising because the true association is linier.
+This model was identified as the best because it ha the lowest adjusted R squared. It includes on the 5 exponentiated terms, the largest used in producing our outcome.
 
 ## (d) Using the leaps package in R, perform backward stepwise selection. Write out the  least squares linear model that you found using backward stepwise selection (specify both the predictors and the coefcients in this model). Comment on your results, in light of the way you generated thedata in (a). In what sense is this model 
 
@@ -388,20 +395,24 @@ coef(backwardStep,which.min(results$adjr2))
 
 ```
 
-using the adjusted r squared to identify the best model in the backward step algorithm removed all but one coefficient, keeping the 2nd polynomial. It is somewhat surprising that the first coeffiient was not chosen. However, it was the first one removed y the algorithm, preventing its selection as higher order polynomials were removed.
+using the adjusted r squared to identify the best model in the backward step algorithm removed all but one coefficient, keeping the 5thpolynomial exponentiated term. It was one of the terms used to produce our outcome.
 
 ## (e) Now generate n = 100 test observations (you can do this using the exact same data-generating set-up used in (a)). Compute the mean squared error of the models obtained in (b){(d) on this test set. Comment on your results. 
 
 ```{r}
 set.seed(8000)
 
-Basey <- 1:100
-
+x <- sample(1:1000,100, replace = TRUE)
+y<- 1:100
 for (i in 1:100) {
- Basey[i] <- b0 + betafunction(x[i]) + round(rnorm(1,0,80),0)
+
+
+  y[i] <- 100 + 30*x[i] + 50*x[i]^2 + 40*x[i]^5 + round(rnorm(1,0,800),0)
+
+
 }
 
-Q5DataTest <- as.data.frame(cbind(y= Basey,x))
+Q5DataTest <- as.data.frame(cbind(y,x))
 
 Q5DataExpTest <- as.data.frame(cbind(Q5DataTest, Q5DataTest$x^2, Q5DataTest$x^3, Q5DataTest$x^4, Q5DataTest$x^5, Q5DataTest$x^6, Q5DataTest$x^7, Q5DataTest$x^8, Q5DataTest$x^9, Q5DataTest$x^10))
 
@@ -424,4 +435,4 @@ bwdtestSummary <- summary(testbwdlr)
 mean(bwdtestSummary$residuals^2)
 ```
 
-The model calculated by our initial regression was the highest performing.
+The model calculated by our initial regression was the highest performing. 
