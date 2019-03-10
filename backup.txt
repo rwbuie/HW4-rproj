@@ -1,12 +1,9 @@
 ---
 title: "BIOST 546 HW4"
 author: "Ronald Buie"
-output:
-  pdf_document: default
-  html_notebook: default
-  html_document:
-    df_print: paged
+output: html_notebook
 ---
+
 
 # Due Via Online Submission to Canvas: Sunday, March 10 at 12 PM (Noon)
 
@@ -30,9 +27,9 @@ and
 $$RSS = min \sum^i_{i=1} (Y_i - \hat\beta_0 - 100 \times \hat\beta_1\tilde{X}_1 - \hat\beta_2X_2)^2 =  min \sum^i_{i=1} (Y_i - \hat\beta_0 -  \hat\beta_1X_1 - \hat\beta_2X_2)^2$$
 
 
-## (b) Let ^ f0, ^ f1, ^ f2 denote the least squares regression coefcients for a model that predicts Y using X1 and X2. Derive the least squares coefcient estimates for a model that predicts Y using X1 and X2. (By derive I mean: state the coefcient estimates, and show mathematically why these are the coefcient estimates.)
+## (b) Let ^ f0, ^ f1, ^ f2 denote the least squares regression coefcients for a model that predicts Y using X1 and X2. Derive the least squares coefcient estimates for a model that predicts Y using ~X1 and X2. (By \derive", I mean: state the coefcient estimates, and show mathematically why these are the coefcient estimates.)
 
-
+From the previous proof it carries that
 
 ## (c) Prove that the ftted values for the least squares model that predicts Y using X1 and X2 are the same as the ftted values for the least squares model that predicts Y using ~X1 and X2.
 
@@ -57,7 +54,7 @@ and
 
 $$ f(Y)^\prime =\hat\beta_1\tilde{X}_1 $$
 
-give that $X_1 \times 0.01 = \tilde{X}_1$ and $\tilde{X}_1 \times 100 = X_1$ it follows that $f(Y)^\prime = f(Y) \times 0.01$ and that $f(Y) = f(Y)^\prime \times 100$
+give that $X_1 \times 0.01 = \tilde{X}_1 $ and $ \tilde{X}_1 \times 100 = X_1$ it follows that $f(Y)^\prime = f(Y) \times 0.01$ and that $f(Y) = f(Y)^\prime \times 100$
 
 
 ## (d) Now, for some fxed f > 0, consider performing ridge regression to predict Y using X1 and X2, and also performing a separate ridge regression to predict Y using ~X1 and X2. Which of these ftted models will have a smaller residual sum of squares? Which of these ftted models will have a smaller value of f2 1 + f2 2? Justify your answers.
@@ -164,9 +161,8 @@ The two models will have an identical RSS, as this is scale invariant. However f
 
 ```{r}
 FIFAData <- read.csv("./data.csv")
-FIFAData <- FIFAData[1:500,]
 FIFAData <- FIFAData[,1:51]
-names(FIFAData)[1] <- "Value"
+
 ```
 
 ##(a) Describe the data. Where did you get it from? What is the meaning of the response, and what are the meanings of the predictors?
@@ -175,105 +171,34 @@ names(FIFAData)[1] <- "Value"
 summary(FIFAData)
 
 ```
-These are FIFA data. All categorical data have been removed and numerics containing non numeric characters have had the non numeric portion (such as euro signs) removed. The remaining values are summarized above. We are using Wage as our outcome, and all other variables as our predictors. These variables include performance statistics, heright, estimated value, age, and the cost of releasing the player. Only the first 50 features have been kept.
+These are FIFA data. All categorical data have been removed and numerics containing non numeric characters have had the non numeric portion (such as euro signs) removed. The remaining values are summarized above. We are using Wage as our outcome, and all other variables as our predictors. These variables include performance statistics, heright, estimated value, age, and the cost of releasing the player.
 
 ## (b) Fit a least squares linear model to the data, and provide an estimate of the test error. (Explain how you got this estimate.)
 
-Below we use LOO Cross validation with K=4 to estimate the MSE.
+Below we use LOO Cross validation to estimate the test erorr.
 
 ```{r}
 library(boot)
-set.seed(1000)
 FIFAglm <- glm(Value~., data = FIFAData)
-cv.err <- cv.glm(FIFAData, FIFAglm, K = 4)
+cv.err <- cv.glm(FIFAData, FIFAglm)
 cv.err$delta
 
 
 ```
 
-
-
 ## (c) Fit a ridge regression model to the data, with a range of values of the tuning parameter f. Make a plot like the left-hand panel of Figure 6.4 in the textbook.
 
-```{r}
-library(glmnet)
-set.seed(2000)
-
-
-predictors = model.matrix(Value ~ ., data = FIFAData)[,-1]
-outcome = FIFAData$Value
-
-grid = 10^seq(10, -2, length = 100)
-ridge_mod = glmnet(predictors, outcome, alpha = 0, lambda = grid)
-dim(coef(ridge_mod))
-plot(ridge_mod)    
-```
 
 ## (d) What value of f in the ridge regression model provides the smallest estimated test error? Report this estimate of test error. (Also, explain how you estimated test error.)
-
-```{r}
-library(Momocs)
-library(glmnet)
-set.seed(3000)
-
-PredictTrain <- model.matrix(Value~., FIFAData[1:250,])
-PredictTrain <- PredictTrain[,-1]
-PredictTest <- model.matrix(Value~., FIFAData[251:500,])
-PredictTest <- PredictTest[,-1]
-ResponseTrain <- FIFAData[1:250,]$Value
-ResponseTest <- FIFAData[251:500,]$Value
-
-cv.out <- cv.glmnet(PredictTrain, ResponseTrain, alpha = 0) 
-bestlamda <- cv.out$lambda.min
-plot(cv.out)
-
-prediction <- predict(ridge_mod, s = bestlamda, newx = PredictTest)
-bestMSE <- mean((prediction - ResponseTest)^2) 
-
-
-```
 
 
 ## (e) Repeat (c), but for a lasso model.
 
-```{r}
-set.seed(4000)
 
-FIFALasso <- glmnet(PredictTrain, ResponseTrain, alpha = 1,lambda = grid)
-
-plot(FIFALasso)  
-
-
-
-```
 ## (f) Repeat (d), but for a lasso model. Which features are included in this lasso model?
 
-```{r}
 
-set.seed(5000)
-
-FIFALassoCV <- cv.glmnet(PredictTrain, ResponseTrain, alpha = 1)
-plot(FIFALassoCV) 
-
-bestLASSOlamda <- FIFALassoCV$lambda.min
-
-lasso_pred <- predict(FIFALasso, s = bestlamda, newx = PredictTest)
-LASSOMSE <- mean((lasso_pred - ResponseTest)^2) 
-
-
-out<- glmnet(as.matrix(FIFAData[,-1]), FIFAData$Value, alpha = 1, lambda = grid) 
-lasso_coef <- predict(FIFALasso, type = "coefficients", s = bestLASSOlamda)[1:50,]
-
-lasso_coef[lasso_coef != 0] # Display only non-zero coefficients
-
-
-
-```
-
-The best MSE is `r LASSOMSE` and is provided by a lamda of `r bestLASSOlamda`.
-
-
-# 4. Consider predicting a quantitative response using p features, using a linear regression modelt via least squares. LetMBSSk k denote the best feature models in the best subset, forward stepwise, and backward stepwise selection procedures. Recall that the training set residual sum of squares (or RSS for short) is ll in the blank with one of the following: s than or equalto, greater than or equal toequal toot enough information totell if it is not possible to complete the sentence as given. Justify your answers.
+# 4. Consider predicting a quantitative response using p features, using a linear regression model ft via least squares. LetMBSSk ;MFWD k ;MBWD k denote the bestk-feature models in the best subset, forward stepwise, and backward stepwise selection procedures.Recall that the training set residual sum of squares (or RSS for short) is defned as Pn i=1(yi ?? ^yi)2. For each claim, fll in the blank with one of the following: \less than or equal to", \greater than or equal to", \equal to". Say \not enough information to tell" if it is not possible to complete the sentence as given. Justify your answers.
 
 ### (a) Claim: The RSS of MBWD p is the RSS of MBSS p .
 
@@ -314,114 +239,16 @@ equal. BWD will start with the full model, BSS will always choose the optimal mo
 
 ##(a) Simulate a quantitative predictor X with n = 100. Then, generate aresponse Y according to the modelY = f0 + f1X + f2X2 + f3X5 + e:Provide details of how you generated X, how you chose f0; : : : ; f3, and how you generated e.
 
-```{r}
-set.seed(6000)
-
-betafunction <- function(x) {
- #(x^2)/400
-  x+1
-}
-b0 = 300
-
-x <- sample(1:1000,100, replace = TRUE)
-y<- 1:100
-for (i in 1:100) {
- y[i] <- b0 + betafunction(x[i]) + betafunction(x[i]^2) + betafunction(x[i]^5) + round(rnorm(1,0,80),0)
-}
-plot(y~x)
-
-Basey <- 1:100
-
-for (i in 1:100) {
- Basey[i] <- b0 + betafunction(x[i]) + round(rnorm(1,0,80),0)
-}
-
-Q5Data <- as.data.frame(cbind(y= Basey,x))
-plot(Basey~x)
-```
-
-Our predictors are a set of random numbers from `r min(x)` to `r max(x)`. The beta coefficient for $\beta_0$ was generated as an arbitrary number `r b0`. Our $\beta_1$ coefficient was generated using a static formula $(X^2)/400$ so that the $\beta_2$ and $\beta_3$ of this formula are the squared and pentagonal powers of this formula. Our error term was generated as an integer from a normal distribution with a mean of 0 and standard deviation of 800.
 
 ## (b) Fit a least squares linear model to predict Y using X;X2; : : : ;X10, andreport the coefcient estimates obtained, as well as the p-values corresponding to null hypotheses of the form H0j : fj = 0. Comment on your results, in light of the way you generated the data in (a). 
 
-```{r}
-Q5DataExp <- as.data.frame(cbind(Q5Data, Q5Data$x^2, Q5Data$x^3, Q5Data$x^4, Q5Data$x^5, Q5Data$x^6, Q5Data$x^7, Q5Data$x^8, Q5Data$x^9, Q5Data$x^10))
-test <- lm(y~., data = Q5DataExp)
-summary(test)
-
-```
-
-Because we know the true relationship of x and y is 1 to 1, we know that any amount of exponentiation would create a reduced fit. We see this in our regression where, including polynomials up to 10, reducing all of them to insignicance.
-
-## (c) Using the leaps package in R, perform forward stepwise selection. Write out the  least squares linear model that you found using forward stepwise selection (specify both the predictors and the coefcients in thismodel). Comment on your results, in light of the way you generated the data in (a). 
-
-```{r}
-library(leaps)
-set.seed(7000)
-forwardStep <- regsubsets(y~., data = Q5DataExp, method = "forward", nvmax = 10)
 
 
-results <-summary(forwardStep)
-
-results$which[which.min(results$adjr2),]
-
-coef(forwardStep,which.min(results$adjr2))
-```
-
-This model was identified as the best because it ha the lowest adjusted R squared. Surprisngly it also includes three of the polynomial terms. This is surprising because the true association is linier.
-
-## (d) Using the leaps package in R, perform backward stepwise selection. Write out the  least squares linear model that you found using backward stepwise selection (specify both the predictors and the coefcients in this model). Comment on your results, in light of the way you generated thedata in (a). In what sense is this model 
+## (c) Using the leaps package in R, perform forward stepwise selection. Write out the \best" least squares linear model that you found using forward stepwise selection (specify both the predictors and the coefcients in thismodel). Comment on your results, in light of the way you generated the data in (a). In what sense is this model \best"?
 
 
-```{r}
-library(leaps)
-set.seed(7000)
-backwardStep <- regsubsets(y~., data = Q5DataExp, method = "backward", nvmax = 10)
+## (d) Using the leaps package in R, perform backward stepwise selection. Write out the \best" least squares linear model that you found using backward stepwise selection (specify both the predictors and the coefcients in this model). Comment on your results, in light of the way you generated thedata in (a). In what sense is this model \best"?
 
 
-results <-summary(backwardStep)
-
-results$which[which.min(results$adjr2),]
-
-coef(backwardStep,which.min(results$adjr2))
-
-
-```
-
-using the adjusted r squared to identify the best model in the backward step algorithm removed all but one coefficient, keeping the 2nd polynomial. It is somewhat surprising that the first coeffiient was not chosen. However, it was the first one removed y the algorithm, preventing its selection as higher order polynomials were removed.
 
 ## (e) Now generate n = 100 test observations (you can do this using the exact same data-generating set-up used in (a)). Compute the mean squared error of the models obtained in (b){(d) on this test set. Comment on your results. 
-
-```{r}
-set.seed(8000)
-
-Basey <- 1:100
-
-for (i in 1:100) {
- Basey[i] <- b0 + betafunction(x[i]) + round(rnorm(1,0,80),0)
-}
-
-Q5DataTest <- as.data.frame(cbind(y= Basey,x))
-
-Q5DataExpTest <- as.data.frame(cbind(Q5DataTest, Q5DataTest$x^2, Q5DataTest$x^3, Q5DataTest$x^4, Q5DataTest$x^5, Q5DataTest$x^6, Q5DataTest$x^7, Q5DataTest$x^8, Q5DataTest$x^9, Q5DataTest$x^10))
-
-#lr
-testlr <- lm(y~., data = Q5DataExpTest)
-testSummary <- summary(testlr)
-
-mean(testSummary$residuals^2)
-
-#fwdlr
-testfwdlr <-lm(y~x+ `Q5DataTest$x^2` + `Q5DataTest$x^5` + `Q5DataTest$x^10`, data = Q5DataExpTest)
-fwdtestSummary <- summary(testfwdlr)
-
-mean(fwdtestSummary$residuals^2)
-
-#bwdlr
-testbwdlr <-lm(y~ `Q5DataTest$x^2`, data = Q5DataExpTest)
-bwdtestSummary <- summary(testbwdlr)
-
-mean(bwdtestSummary$residuals^2)
-```
-
-The model calculated by our initial regression was the highest performing.
